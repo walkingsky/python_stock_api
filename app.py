@@ -46,6 +46,31 @@ def getStorkHistory():
     return make_response(history)
 
 
+@app.route('/apis/stock')
+def getStockByCode():
+    rule = {
+        "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
+        "code": Rule(type=str, required=True, reg=r'\d{6}')
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    code = params['code']
+    if params['market'] == '上海':
+        code = '0' + params['code']
+    if params['market'] == '深圳':
+        code = '1' + params['code']
+    if params['market'] == '北京':
+        code = '2' + params['code']
+
+    stockService = StockService()
+    data = stockService.getStockByCode(code)
+    print(data)
+    return make_response(data)
+
+
 if __name__ == "__main__":
     """初始化,debug=True"""
     app.run(host='127.0.0.1', port=5000, debug=True)
