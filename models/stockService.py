@@ -21,6 +21,9 @@ class StockService:
         return path
 
     def getHold(self):
+        '''
+        从单一的一个csv文件，获取股票的持仓数据
+        '''
         path = self.getPath()
         df = pd.read_csv(path+'/广发操盘手-持仓.csv', sep=',',
                          dtype={'证券代码': str, '股东账号': str})
@@ -41,7 +44,41 @@ class StockService:
         print(response_body)
         return response_body
 
+    def getHistoryHold(self):
+        '''
+        从csv文件中，获取所有持仓过的股票数据
+        '''
+        path = self.getPath()
+        all_files = glob.glob(os.path.join(path, "*今日成交.*.csv"))
+        if not all_files:
+            return '{}'
+
+        all_df = []
+        for f in all_files:
+            df = pd.read_csv(f, sep=',', usecols=[
+                             '市场', '证券代码', '证券名称'], dtype={'证券代码': str})
+            all_df.append(df)
+
+        merged_df = pd.concat(all_df, ignore_index=True, sort=True).drop_duplicates(
+            subset=['市场', '证券代码']).reset_index(drop=True)
+        # print(merged_df)
+        merged_df['证券代码'] = merged_df['证券代码'].str.strip()
+        row_num = merged_df.shape[0]
+        json_str = '{"code":200,"results":['
+        for index, row in merged_df.iterrows():
+            json_str = json_str + '{"key":'+str(index)+',"code":"'+row['证券代码']+'","name":"'\
+                + row['证券名称'] + '","market":"'+row['市场']+'"}'
+            if index < row_num - 1:
+                json_str = json_str + ','
+
+        json_str = json_str + ']}'
+        # print(json_str)
+        return json_str
+
     def getHistory(self, stock_code, market):
+        '''
+        通过股票代码，市场，从csv列表文件中获取股票的历史交易数据
+        '''
         path = self.getPath()
         all_files = glob.glob(os.path.join(path, "*今日成交.*.csv"))
         if not all_files:

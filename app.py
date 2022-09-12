@@ -25,8 +25,19 @@ def api_test():
 
 @app.route('/apis/stock/hold')
 def getStockHold():
+    rule = {
+        "history": Rule(type=str, required=False, default='0', enum=['1', '0']),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
     stockService = StockService()
-    stocks = stockService.getHold()
+    if params['history'] == '0':
+        stocks = stockService.getHold()
+    else:
+        stocks = stockService.getHistoryHold()
     return make_response(stocks)
 
 
