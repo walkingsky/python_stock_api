@@ -6,7 +6,6 @@ __author__ = 'walkingsky'
 import os
 import glob
 import time
-import re
 import pandas as pd
 import requests
 import numpy as np
@@ -150,6 +149,17 @@ class StockService:
         '''
         base_url = 'http://img1.money.126.net/data/hs/time/today/'+code+'.json'
         res = requests.get(base_url)
+        result = {}
+        if(res.status_code == 200):
+            return res.text
+        return result
+
+    def getStockHistoryData(self, code):
+        # 获取股票的历史行情
+        today = time.strftime("%Y%m%d", time.localtime())
+        url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?fields1=f1,f2,f3,f4,f5&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&fqt=0&end=' + \
+            today + '&klt=101&secid=' + code + '&fqt=1&lmt=1000'
+        res = requests.get(url)
         result = {}
         if(res.status_code == 200):
             return res.text

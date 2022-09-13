@@ -25,6 +25,7 @@ def api_test():
 
 @app.route('/apis/stock/hold')
 def getStockHold():
+    # 获取持有股票信息
     rule = {
         "history": Rule(type=str, required=False, default='0', enum=['1', '0']),
     }
@@ -41,8 +42,35 @@ def getStockHold():
     return make_response(stocks)
 
 
+@app.route('/apis/stock/historydata')
+def getStockHistoryData():
+    # 获取股票历史行情
+    rule = {
+        "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
+        "code": Rule(type=str, required=True, reg=r'\d{6}')
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    code = params['code']
+    if params['market'] == '上海':
+        code = '1.' + params['code']
+    if params['market'] == '深圳':
+        code = '0.' + params['code']
+    if params['market'] == '北京':
+        code = '2.' + params['code']
+
+    stockService = StockService()
+    data = stockService.getStockHistoryData(code)
+    # print(data)
+    return make_response(data)
+
+
 @app.route('/apis/stock/history')
 def getStorkHistory():
+    # 获取股票历史交易数据
     rule = {
         "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
         "code": Rule(type=str, required=True, reg=r'\d{6}')
@@ -59,6 +87,7 @@ def getStorkHistory():
 
 @app.route('/apis/stock')
 def getStockByCode():
+    # 获取股票最后一天的行情数据
     rule = {
         "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
         "code": Rule(type=str, required=True, reg=r'\d{6}')
@@ -78,7 +107,7 @@ def getStockByCode():
 
     stockService = StockService()
     data = stockService.getStockByCode(code)
-    print(data)
+    # print(data)
     return make_response(data)
 
 
