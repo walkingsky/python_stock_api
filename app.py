@@ -3,6 +3,7 @@
 __author__ = "walkingsky"
 
 from ast import Try
+from email.policy import default
 from hashlib import new
 from flask_cors import CORS
 # , render_template, Response, redirect, url_for
@@ -116,7 +117,8 @@ def getIndustryData():
     # 获取行业排行数据
     rule = {
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
-        "sort": Rule(type=str, required=True, enum=['asc', 'desc'])
+        "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
+        "pz": Rule(type=int, required=False, default=5, gte=5, lte=100),
     }
     try:
         params = pre.parse(rule=rule)
@@ -124,7 +126,8 @@ def getIndustryData():
         return make_response({"error": "参数错误"})
 
     stockService = StockService()
-    data = stockService.getIndustryData(params['kind'], params['sort'])
+    data = stockService.getIndustryData(
+        params['kind'], params['sort'], params['pz'])
     # print(data)
     return make_response(data)
 
@@ -135,7 +138,8 @@ def getIndustryInfoData():
     rule = {
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
         "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
-        "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}')
+        "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}'),
+        "pz": Rule(type=int, required=False, default=10, gte=10, lte=1000),
     }
     try:
         params = pre.parse(rule=rule)
@@ -144,7 +148,25 @@ def getIndustryInfoData():
 
     stockService = StockService()
     data = stockService.getIndustryInfoData(
-        params['industryCode'], params['kind'], params['sort'])
+        params['industryCode'], params['kind'], params['sort'], params['pz'])
+    # print(data)
+    return make_response(data)
+
+
+@app.route('/apis/industry/history')
+def getIndustryHistoryData():
+    # 获取行业内排行数据
+    rule = {
+        "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}'),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    stockService = StockService()
+    data = stockService.getIndustryHistoryData(
+        params['industryCode'])
     # print(data)
     return make_response(data)
 

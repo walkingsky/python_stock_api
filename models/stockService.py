@@ -165,8 +165,8 @@ class StockService:
             return res.text
         return result
 
-    def getIndustryData(self, kind, sort):
-        pz = '5'
+    def getIndustryData(self, kind, sort, pz):
+        # 获取行业排行数据
         fid = 'f3'
         if kind != 'fluctuate':
             fid = 'f62'
@@ -178,14 +178,13 @@ class StockService:
             '&fs=m:90+t:2+f:!50&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152,f124,f107,f104,f105,f140,f141,f207,f208,f209,f222'
 
         res = requests.get(url)
-        print(res)
         result = {}
         if(res.status_code == 200):
             return res.text
         return result
 
-    def getIndustryInfoData(self, industryCode, kind, sort):
-        pz = '5'
+    def getIndustryInfoData(self, industryCode, kind, sort, pz):
+        # 获取行业内股票排行数据
         fid = 'f3'
         if kind != 'fluctuate':
             fid = 'f62'
@@ -193,11 +192,23 @@ class StockService:
         if sort != 'asc':
             po = '0'
 
-        url = "https://push2.eastmoney.com/api/qt/clist/get?fid=" + fid + "&po=" + po + "&pz=10&pn=1&np=1&fltt=2&invt=2&fs=b:" + \
+        url = "https://push2.eastmoney.com/api/qt/clist/get?fid=" + fid + "&po=" + po + "&pz="+str(pz)+"&pn=1&np=1&fltt=2&invt=2&fs=b:" + \
             industryCode + "&fields=f12,f14,f2,f3,f62,f184,f66,f69,f72,f75,f78,f81,f84,f87,f204,f205,f124,f1,f13"
 
         res = requests.get(url)
-        print(res)
+        # print(res)
+        result = {}
+        if(res.status_code == 200):
+            return res.text
+        return result
+
+    def getIndustryHistoryData(self, industryCode):
+        # 获取行业日K曲线数据
+        url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=90.'+industryCode + \
+            '&ut=fa5fd1943c7b386f172d6893dbfba10b&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=101&fqt=1&beg=0&end=20500101&smplmt=460&lmt=1000000'
+
+        res = requests.get(url)
+        # print(res)
         result = {}
         if(res.status_code == 200):
             return res.text
