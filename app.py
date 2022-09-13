@@ -111,6 +111,45 @@ def getStockByCode():
     return make_response(data)
 
 
+@app.route('/apis/industry')
+def getIndustryData():
+    # 获取行业排行数据
+    rule = {
+        "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
+        "sort": Rule(type=str, required=True, enum=['asc', 'desc'])
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    stockService = StockService()
+    data = stockService.getIndustryData(params['kind'], params['sort'])
+    # print(data)
+    return make_response(data)
+
+
+@app.route('/apis/industry/info')
+def getIndustryInfoData():
+    # 获取行业内排行数据
+    rule = {
+        "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
+        "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
+        "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}')
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    stockService = StockService()
+    data = stockService.getIndustryInfoData(
+        params['industryCode'], params['kind'], params['sort'])
+    # print(data)
+    return make_response(data)
+
+
 if __name__ == "__main__":
     """初始化,debug=True"""
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True,
+            threaded=True)

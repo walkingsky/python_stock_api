@@ -164,3 +164,41 @@ class StockService:
         if(res.status_code == 200):
             return res.text
         return result
+
+    def getIndustryData(self, kind, sort):
+        pz = '5'
+        fid = 'f3'
+        if kind != 'fluctuate':
+            fid = 'f62'
+        po = '1'
+        if sort != 'asc':
+            po = '0'
+
+        url = 'http://push2.eastmoney.com/api/qt/clist/get?pn=1&pz='+str(pz)+'&po=' + po + '&np=1&fltt=2&invt=2&fid=' + fid + \
+            '&fs=m:90+t:2+f:!50&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f26,f22,f33,f11,f62,f128,f136,f115,f152,f124,f107,f104,f105,f140,f141,f207,f208,f209,f222'
+
+        res = requests.get(url)
+        print(res)
+        result = {}
+        if(res.status_code == 200):
+            return res.text
+        return result
+
+    def getIndustryInfoData(self, industryCode, kind, sort):
+        pz = '5'
+        fid = 'f3'
+        if kind != 'fluctuate':
+            fid = 'f62'
+        po = '1'
+        if sort != 'asc':
+            po = '0'
+
+        url = "https://push2.eastmoney.com/api/qt/clist/get?fid=" + fid + "&po=" + po + "&pz=10&pn=1&np=1&fltt=2&invt=2&fs=b:" + \
+            industryCode + "&fields=f12,f14,f2,f3,f62,f184,f66,f69,f72,f75,f78,f81,f84,f87,f204,f205,f124,f1,f13"
+
+        res = requests.get(url)
+        print(res)
+        result = {}
+        if(res.status_code == 200):
+            return res.text
+        return result
