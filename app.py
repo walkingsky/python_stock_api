@@ -14,6 +14,10 @@ from models.stockService import StockService
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
+# 行业数量默认限制
+limitIn = 5
+# 行业内股票数量默认限制
+limitStock = 10
 
 
 @app.route('/apis/test/')
@@ -144,7 +148,7 @@ def getIndustryData():
     rule = {
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
         "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
-        "pz": Rule(type=int, required=False, default=5, gte=5, lte=100),
+        "pz": Rule(type=int, required=False, default=limitIn, gte=5, lte=100),
     }
     try:
         params = pre.parse(rule=rule)
@@ -165,7 +169,7 @@ def getIndustryInfoData():
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
         "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
         "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}'),
-        "pz": Rule(type=int, required=False, default=10, gte=10, lte=1000),
+        "pz": Rule(type=int, required=False, default=limitStock, gte=10, lte=1000),
     }
     try:
         params = pre.parse(rule=rule)
