@@ -2,30 +2,27 @@
 # -*- coding:utf-8 -*-
 __author__ = "walkingsky"
 
-from ast import Try
-from email.policy import default
-from hashlib import new
+
 from flask_cors import CORS
-# , render_template, Response, redirect, url_for
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, render_template
 from pre_request import pre, Rule
 from flask.helpers import make_response
 from models.stockService import StockService
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../../frontend/vue_stock_view/dist/static",
+            template_folder="../../frontend/vue_stock_view/dist")
+
 CORS(app, resources=r'/*')
+
 # 行业数量默认限制
 limitIn = 5
 # 行业内股票数量默认限制
 limitStock = 10
 
 
-@app.route('/apis/test/')
-def api_test():
-    ans = jsonify({
-        "product": [5, 20, 36, 10, 10, 20]
-    })
-    return make_response(ans)
+@app.route('/')
+def index():
+    return render_template("index.html")
 
 
 @app.route('/apis/stock/hold')
