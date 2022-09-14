@@ -142,12 +142,25 @@ class StockService:
         response_body = response_body + ']}'
         return response_body
 
-    def getStockByCode(self, code):
+    def getStockByCode126(self, code):
         '''
-            获取股票的是实时信息
+            获取股票的是实时信息，126数据接口
             #code 参数，code 可以是一个，也可以是用逗号分隔的多个。 要带上市场简写，比如 sh600036,sz300301
         '''
         base_url = 'http://img1.money.126.net/data/hs/time/today/'+code+'.json'
+        res = requests.get(base_url)
+        result = {}
+        if(res.status_code == 200):
+            return res.text
+        return result
+
+    def getStockByCodeEastM(self, code):
+        '''
+            获取股票的是实时信息，东财数据接口
+            #code 参数，code 可以是一个，也可以是用逗号分隔的多个。 要带上市场简写，比如 sh600036,sz300301
+        '''
+        base_url = 'https://push2.eastmoney.com/api/qt/stock/trends2/get?secid='+code + \
+            '&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13&fields2=f51,f52,f53,f54,f55,f56,f57,f58&iscr=0'
         res = requests.get(base_url)
         result = {}
         if(res.status_code == 200):
@@ -205,7 +218,7 @@ class StockService:
     def getIndustryHistoryData(self, industryCode):
         # 获取行业日K曲线数据
         url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=90.'+industryCode + \
-            '&ut=fa5fd1943c7b386f172d6893dbfba10b&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=101&fqt=1&beg=0&end=20500101&smplmt=460&lmt=1000000'
+            '&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=101&fqt=1&end=20500101&&lmt=300'
 
         res = requests.get(url)
         # print(res)

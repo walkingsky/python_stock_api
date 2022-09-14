@@ -86,9 +86,9 @@ def getStorkHistory():
     return make_response(history)
 
 
-@app.route('/apis/stock')
-def getStockByCode():
-    # 获取股票最后一天的行情数据
+@app.route('/apis/stock/126')
+def getStockByCode126():
+    # 获取股票最后一天的行情数据,126 的行情数据
     rule = {
         "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
         "code": Rule(type=str, required=True, reg=r'\d{6}')
@@ -107,7 +107,33 @@ def getStockByCode():
         code = '2' + params['code']
 
     stockService = StockService()
-    data = stockService.getStockByCode(code)
+    data = stockService.getStockByCode126(code)
+    # print(data)
+    return make_response(data)
+
+
+@app.route('/apis/stock/east')
+def getStockByCodeEast():
+    # 获取股票最后一天的行情数据,东财的行情数据
+    rule = {
+        "market": Rule(type=str, required=True, enum=['上海', '深圳', '北京']),
+        "code": Rule(type=str, required=True, reg=r'\d{6}')
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    code = params['code']
+    if params['market'] == '上海':
+        code = '1.' + params['code']
+    if params['market'] == '深圳':
+        code = '0.' + params['code']
+    if params['market'] == '北京':
+        code = '2.' + params['code']
+
+    stockService = StockService()
+    data = stockService.getStockByCodeEastM(code)
     # print(data)
     return make_response(data)
 
