@@ -41,7 +41,7 @@ class StockService:
             if index < row_num - 1:
                 response_body = response_body + ','
         response_body = response_body + ']}'
-        print(response_body)
+        # print(response_body)
         return response_body
 
     def getHistoryHold(self):
