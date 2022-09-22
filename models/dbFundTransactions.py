@@ -59,31 +59,29 @@ session = DbSession()
 
 class foudsTrade:
     def add(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
-        # try:
-        add_trade = fundTable(name, code, tradeDate, type,
-                              shares, nav, commission, amount, returned)
-        session.add(add_trade)
-        session.commit()
-        return True
-        # except exc.SQLAlchemyError:
-        return False
+        try:
+            add_trade = fundTable(name, code, tradeDate, type,
+                                  shares, nav, commission, amount, returned)
+            session.add(add_trade)
+            session.commit()
+            return True
+        except exc.SQLAlchemyError:
+            return False
 
     def getAll(self):
         try:
             trades = session.query(fundTable).all()
-            for item in trades:
-                print(item.name)
             return trades
         except exc.SQLAlchemyError:
             return None
 
     def modifyById(self, id, data={}):
-        try:
-            session.query(fundTable).filter_by(id=id).update(data)
-            session.commit()
-            return True
-        except exc.SQLAlchemyError:
-            return False
+        # try:
+        session.query(fundTable).filter_by(id=id).update(data)
+        session.commit()
+        return True
+        # except exc.SQLAlchemyError:
+        return False
 
     def delById(self, id):
         try:
@@ -98,6 +96,14 @@ class foudsTrade:
             session.query(fundTable).delete()
             session.commit()
             return True
+        except exc.SQLAlchemyError:
+            return False
+
+    def getById(self, id):
+        try:
+            trade = session.query(fundTable).filter_by(id=id).first()
+            session.commit()
+            return trade
         except exc.SQLAlchemyError:
             return False
 
