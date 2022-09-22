@@ -2,23 +2,16 @@
 # -*- coding:utf-8 -*-
 
 import enum
-from sqlalchemy import create_engine, Column, Integer, String, Enum, Float
+from sqlalchemy import create_engine, Column, Integer, String, Float
 # import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exc
 
 
-engine = create_engine('sqlite:///fund.db?check_same_thread=False', echo=False)
+engine = create_engine('sqlite:///fund.db?check_same_thread=False', echo=True)
 
 Base = declarative_base()
-
-
-class tradeType(enum.Enum):
-    buy = 1
-    sell = 2
-    into = 3
-    out = 4
 
 
 class fundTable(Base):
@@ -26,13 +19,13 @@ class fundTable(Base):
 
     id = Column(Integer, primary_key=True)
     # 基金名称
-    name = Column(String(20))
+    name = Column(String(40))
     # 基金代码
     code = Column(String(6))
     # 交易日期
-    tradeDate = Column(String(10))
+    tradedate = Column(String(10))
     # 交易类型（买卖方向）
-    type = Column(Enum(tradeType))
+    type = Column(String(4))
     # 份额
     shares = Column(Integer)
     # 单位净值
@@ -47,7 +40,7 @@ class fundTable(Base):
     def __init__(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
         self.name = name
         self.code = code
-        self.tradeDate = tradeDate
+        self.tradedate = tradeDate
         self.type = type
         self.shares = shares
         self.namsharese = shares
@@ -66,14 +59,14 @@ session = DbSession()
 
 class foudsTrade:
     def add(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
-        try:
-            add_trade = fundTable(name, code, tradeDate, type,
-                                  shares, nav, commission, amount, returned)
-            session.add(add_trade)
-            session.commit()
-            return True
-        except exc.SQLAlchemyError:
-            return False
+        # try:
+        add_trade = fundTable(name, code, tradeDate, type,
+                              shares, nav, commission, amount, returned)
+        session.add(add_trade)
+        session.commit()
+        return True
+        # except exc.SQLAlchemyError:
+        return False
 
     def getAll(self):
         try:

@@ -3,13 +3,11 @@
 __author__ = 'walkingsky'
 
 
-import os
-import glob
-import time
+import json
 import pandas as pd
 import requests
 import numpy as np
-from models.dbFundTransactions import foudsTrade, tradeType
+from models.dbFundTransactions import foudsTrade
 
 
 class FundService:
@@ -20,11 +18,12 @@ class FundService:
         '''
             通过关键字搜索基金，返回基金列表
         '''
-        base_url = 'https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?m=0&key='+key
+        #base_url = 'https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?m=0&key='+key
+        base_url = 'http://fundsuggest.eastmoney.com/FundSearch/api/FundSearchPageAPI.ashx?m=0&key=' + key
         res = requests.get(base_url)
         result = {}
         if(res.status_code == 200):
-            return res.text
+            return json.loads(res.text)['Datas']['FundList']
         return result
 
     def addTradeRecord(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
