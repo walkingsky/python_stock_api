@@ -7,12 +7,12 @@ import json
 import pandas as pd
 import requests
 import numpy as np
-from models.dbFundTransactions import foudsTrade
+from models.dbFundTransactions import fundsTrade
 
 
 class FundService:
     def __init__(self) -> None:
-        self.dbFunds = foudsTrade()
+        self.dbFunds = fundsTrade()
 
     def getFundSeggestByKey(self, key):
         '''
@@ -27,7 +27,7 @@ class FundService:
         return result
 
     def addTradeRecord(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
-        #dbFunds = foudsTrade()
+        #dbFunds = fundsTrade()
         return self.dbFunds.add(name, code, tradeDate, type, shares, nav, commission, amount, returned)
 
     def getAllTradeRecord(self):

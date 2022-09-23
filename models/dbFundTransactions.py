@@ -57,7 +57,7 @@ DbSession = sessionmaker(bind=engine)
 session = DbSession()
 
 
-class foudsTrade:
+class fundsTrade:
     def add(self, name, code, tradeDate, type, shares, nav, commission, amount, returned):
         try:
             add_trade = fundTable(name, code, tradeDate, type,
