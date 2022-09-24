@@ -5,11 +5,14 @@ __author__ = "walkingsky"
 from flask import Blueprint
 from pre_request import pre, Rule
 from flask.helpers import make_response, request
+from app import cache
 from models.fundService import FundService
 from models.dbFundTransactions import fundsTrade
 import json
 
 fund_api = Blueprint('fund_api', __name__)
+
+cachePrefixGetAll = 'fundGetAll'
 
 
 @fund_api.route('/apis/fund/search')
@@ -54,6 +57,8 @@ def addTradeRecord():
     except:
         return make_response({"error": "参数错误"})
 
+    cache.delete(cachePrefixGetAll)
+
     fundsTradeDb = fundsTrade()
     data = fundsTradeDb.add(
         name=params['name'], code=params['code'], tradeDate=params['tradedate'],
@@ -72,6 +77,7 @@ def addTradeRecord():
 
 
 @fund_api.route('/apis/fund/getall')
+@cache.cached(timeout=3600, key_prefix=cachePrefixGetAll)
 def getAllTradeRecord():
     # 获取所有的基金交易记录
     fundsTradeDb = fundsTrade()
@@ -116,6 +122,8 @@ def modidyTradeRecord():
         params = pre.parse(rule=rule)
     except:
         return make_response({"error": "参数错误"})
+
+    cache.delete(cachePrefixGetAll)
 
     fundsTradeDb = fundsTrade()
     data = fundsTradeDb.modifyById(id=params['id'],
@@ -172,6 +180,9 @@ def delById():
 
     fundsTradeDb = fundsTrade()
     data = fundsTradeDb.delById(id=params['id'])
+
+    cache.delete(cachePrefixGetAll)
+
     res = {}
     if(data == True):
         res['code'] = 200
@@ -208,6 +219,9 @@ def importCsv():
             name=params[0], code=params[1], tradeDate=params[2], type=params[3],
             shares=params[4], nav=params[5], commission=params[7], amount=params[6],
             returned=params[8])
+
+    cache.delete(cachePrefixGetAll)
+
     res = {}
     if(data == True):
         res['code'] = 200
