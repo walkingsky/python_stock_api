@@ -5,7 +5,7 @@ __author__ = "walkingsky"
 from flask import Blueprint
 from pre_request import pre, Rule
 from flask.helpers import make_response, request
-from app import cache
+from cache import cache
 from models.fundService import FundService
 from models.dbFundTransactions import fundsTrade
 import json

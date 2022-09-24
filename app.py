@@ -7,16 +7,14 @@ from flask_cors import CORS
 from flask import Flask, render_template
 from route.stock import stock_api
 from route.fund import fund_api
-from flask_cache import Cache
+from cache import cache
 
 
 app = Flask(__name__, static_folder="../../frontend/vue_stock_view/dist/static",
             template_folder="../../frontend/vue_stock_view/dist")
 
-cache = Cache(app, config={'CACHE_TYPE': 'filesystem',
-                           'CACHE_DIR': './temp_data/cache',  # 缓存目录
-                           'CACHE_DEFAULT_TIMEOUT': 600,
-                           'CACHE_THRESHOLD': 200})
+
+cache.init_app(app)
 
 CORS(app, resources=r'/*')
 

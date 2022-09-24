@@ -5,8 +5,8 @@ __author__ = "walkingsky"
 from flask import Blueprint, current_app, request
 from pre_request import pre, Rule
 from flask.helpers import make_response
-#from app import cache
 from models.stockService import StockService
+from cache import cache
 
 stock_api = Blueprint('stock_api', __name__)
 
@@ -15,11 +15,9 @@ limitIn = 5
 # 行业内股票数量默认限制
 limitStock = 10
 
-cache = current_app.
-
 
 def key_prefix_func():
-    key_prefix = "view%s"
+    key_prefix = "%s"
     with current_app.app_context():
         if '%s' in key_prefix:
             # 这里改成request.url
