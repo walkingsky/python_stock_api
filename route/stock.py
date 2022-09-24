@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 __author__ = "walkingsky"
 
-from flask import Blueprint
+from flask import Blueprint, current_app, request
 from pre_request import pre, Rule
 from flask.helpers import make_response
+#from app import cache
 from models.stockService import StockService
 
 stock_api = Blueprint('stock_api', __name__)
@@ -14,8 +15,22 @@ limitIn = 5
 # 行业内股票数量默认限制
 limitStock = 10
 
+cache = current_app.
+
+
+def key_prefix_func():
+    key_prefix = "view%s"
+    with current_app.app_context():
+        if '%s' in key_prefix:
+            # 这里改成request.url
+            cache_key = key_prefix % request.url
+        else:
+            cache_key = key_prefix
+    return cache_key
+
 
 @stock_api.route('/apis/stock/hold')
+@cache.cached(timeout=600, key_prefix=key_prefix_func)
 def getStockHold():
     # 获取持有股票信息
     rule = {
