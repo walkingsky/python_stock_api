@@ -27,6 +27,12 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/tools/clearcache')
+def clearCache():
+    cache.clear()
+    return 'OK'
+
+
 if __name__ == "__main__":
     """初始化,debug=True"""
     app.run(host='127.0.0.1', port=5000, debug=True,

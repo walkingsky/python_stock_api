@@ -148,7 +148,7 @@ def getIndustryData():
     rule = {
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
         "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
-        "pz": Rule(type=int, required=False, default=limitIn, gte=5, lte=100),
+        # "pz": Rule(type=int, required=False, default=limitIn, gte=5, lte=100),
     }
     try:
         params = pre.parse(rule=rule)
@@ -157,7 +157,7 @@ def getIndustryData():
 
     stockService = StockService()
     data = stockService.getIndustryData(
-        params['kind'], params['sort'], params['pz'])
+        params['kind'], params['sort'], limitIn)
     # print(data)
     return make_response(data)
 
@@ -169,7 +169,7 @@ def getIndustryInfoData():
         "kind": Rule(type=str, required=True, enum=['fluctuate', 'capital']),
         "sort": Rule(type=str, required=True, enum=['asc', 'desc']),
         "industryCode": Rule(type=str, required=True, reg=r'[\da-zA-Z]{6}'),
-        "pz": Rule(type=int, required=False, default=limitStock, gte=10, lte=1000),
+        # "pz": Rule(type=int, required=False, default=limitStock, gte=10, lte=1000),
     }
     try:
         params = pre.parse(rule=rule)
@@ -178,7 +178,7 @@ def getIndustryInfoData():
 
     stockService = StockService()
     data = stockService.getIndustryInfoData(
-        params['industryCode'], params['kind'], params['sort'], params['pz'])
+        params['industryCode'], params['kind'], params['sort'], limitStock)
     # print(data)
     return make_response(data)
 
