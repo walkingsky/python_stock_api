@@ -7,7 +7,7 @@ from pre_request import pre, Rule
 from flask.helpers import make_response, request
 from cache import cache
 from models.fundService import FundService
-from models.dbFundTransactions import fundsTrade
+from models.dbFundTransactions import fundsTrade, fundsHold
 import json
 
 fund_api = Blueprint('fund_api', __name__)
@@ -199,28 +199,44 @@ def importCsv():
     # 测试接口，导入服务器本地的一个csv数据文件到数据库
 
     rule = {
-        "csv": Rule(type=int, required=True, gte=1),
+        "kind": Rule(type=str, required=True, enum=['trade', 'hold']),
     }
     try:
         params = pre.parse(rule=rule)
     except:
         return make_response({"error": "参数错误"})
 
-    fundsTradeDb = fundsTrade()
-    fundsTradeDb.delAll()
-    fo = open("./temp_data/基金交易记录完整版.csv", "r", encoding="utf-8")
-    lines = fo.readlines()
+    if(params['kind'] == 'trade'):
+        fundsTradeDb = fundsTrade()
+        fundsTradeDb.delAll()
+        fo = open("./temp_data/基金交易记录完整版.csv", "r", encoding="utf-8")
+        lines = fo.readlines()
 
-    for line in lines:
-        if lines.index(line) == 0:
-            continue
-        params = line.split(',')
-        data = fundsTradeDb.add(
-            name=params[0], code=params[1], tradeDate=params[2], type=params[3],
-            shares=params[4], nav=params[5], commission=params[7], amount=params[6],
-            returned=params[8])
+        for line in lines:
+            if lines.index(line) == 0:
+                continue
+            params = line.split(',')
+            data = fundsTradeDb.add(
+                name=params[0], code=params[1], tradeDate=params[2], type=params[3],
+                shares=params[4], nav=params[5], commission=params[7], amount=params[6],
+                returned=params[8])
+        # 清除缓存
+        cache.delete(cachePrefixGetAll)
+        del fundsTradeDb
+    else:
+        fundsHoldDb = fundsHold()
+        fundsHoldDb.delAll()
 
-    cache.delete(cachePrefixGetAll)
+        fo = open("./temp_data/基金持仓数据.csv", "r", encoding="utf-8")
+        lines = fo.readlines()
+
+        for line in lines:
+            if lines.index(line) == 0:
+                continue
+            params = line.split(',')
+            data = fundsHoldDb.add(
+                name=params[0], code=params[1], shares=params[2], costprice=params[3])
+        del fundsHoldDb
 
     res = {}
     if(data == True):
@@ -229,5 +245,41 @@ def importCsv():
     else:
         res['code'] = 201
         res['success'] = False
-    del fundsTradeDb
+
     return make_response(res)
+
+
+@fund_api.route('/apis/fund/pd')
+def pd():
+    fundsTradeDb = fundsTrade()
+
+    df = fundsTradeDb.pandasRead()
+    print(df)
+    # 判断数据为空的情况
+
+    # 手续费
+    commissionSum = df.sum()['commission']
+    # 退回金额
+    returnedSum = df.sum()['returned']
+
+    df.groupby(['type', 'code'], as_index=False).sum()
+    type_df = df.groupby(['type'], as_index=False).sum()
+
+    # 买入总额
+    buySum = type_df['amount'].where(type_df.type == '买入')[0]
+
+    # 卖出总额
+    sellSum = type_df['amount'].where(type_df.type == '卖出')[2]
+
+    # 转入总额
+    rebuySum = type_df['amount'].where(type_df.type == '转入')[4]
+
+    # 转出总额
+    resellSum = type_df['amount'].where(type_df.type == '转出')[5]
+
+    # 分红总额
+    bonusSum = type_df['amount'].where(type_df.type == '分红')[1]
+
+    del fundsTradeDb
+
+    return 'OK'

@@ -4,9 +4,7 @@ __author__ = 'walkingsky'
 
 
 import json
-import pandas as pd
 import requests
-import numpy as np
 from models.dbFundTransactions import fundsTrade
 
 
