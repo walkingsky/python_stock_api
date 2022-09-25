@@ -10,7 +10,7 @@ from sqlalchemy import exc
 import pandas as pd
 
 
-engine = create_engine('sqlite:///fund.db?check_same_thread=False', echo=True)
+engine = create_engine('sqlite:///fund.db?check_same_thread=False', echo=False)
 
 Base = declarative_base()
 

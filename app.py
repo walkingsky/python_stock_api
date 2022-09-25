@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask import Flask, render_template
 from route.stock import stock_api
 from route.fundTrade import fundTradeApi
+from route.fundHold import fundHoldApi
 from cache import cache
 
 
@@ -20,6 +21,7 @@ CORS(app, resources=r'/*')
 
 app.register_blueprint(stock_api)
 app.register_blueprint(fundTradeApi)
+app.register_blueprint(fundHoldApi)
 
 
 @app.route('/')

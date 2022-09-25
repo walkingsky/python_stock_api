@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-from models.dbFund import fundsTrade, fundsHold
 import sys
 sys.path.append("..")
+from models.dbFund import fundsTrade, fundsHold
+
 
 
 def test1():
