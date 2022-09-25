@@ -115,6 +115,13 @@ class fundsTrade:
         except exc.SQLAlchemyError:
             return False
 
+    def getByCode(self, code):
+        try:
+            trades = session.query(fundsTradeTable).filter_by(code=code).all()
+            return trades
+        except exc.SQLAlchemyError:
+            return None
+
     def delAll(self):
         try:
             session.query(fundsTradeTable).delete()

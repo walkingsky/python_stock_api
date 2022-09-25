@@ -167,6 +167,38 @@ def getById():
     return make_response(res)
 
 
+@fundTradeApi.route('/apis/fund/trade/getbycode')
+def getByCode():
+    # 按照id获取交易记录数据
+    rule = {
+        "code": Rule(type=str, required=True, reg=r'\d{6}'),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    fundsTradeDb = fundsTrade()
+    data = fundsTradeDb.getByCode(code=params['code'])
+    res = {}
+    if(data != None):
+        _data = []
+        for item in data:
+            items = {}
+            for attr, value in item.__dict__.items():
+                if attr != '_sa_instance_state':
+                    items[attr] = value
+            _data.append(items)
+        res['data'] = _data
+        res['code'] = 200
+        res['success'] = True
+    else:
+        res['code'] = 201
+        res['success'] = False
+    del fundsTradeDb
+    return make_response(res)
+
+
 @fundTradeApi.route('/apis/fund/trade/del', methods=['DELETE'])
 def delById():
     # 按照id 单条删除记录
