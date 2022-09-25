@@ -19,7 +19,7 @@ def getCode(key):
         return ''
 
 
-if __name__ == "__main__":
+def test1():
     fo = open("../temp_data/基金交易记录.csv", "r", encoding="utf-8")
     fw = open("../temp_data/1.csv", "w", encoding="utf-8")
     str = ','
@@ -55,3 +55,41 @@ if __name__ == "__main__":
     # 关闭文件
     fo.close()
     fw.close()
+
+
+def test2():
+    fo1 = open("../temp_data/基金交易记录.csv", "r", encoding="utf-8")
+    fo2 = open("../temp_data/基金交易记录完整版.csv", "r", encoding="utf-8")
+    fw = open("../temp_data/1.csv", "w", encoding="utf-8")
+    str = ','
+
+    lines = fo1.readlines()
+    lines2 = fo2.readlines()
+
+    for line in lines:
+
+        datas = line.split(str)
+        print(datas)
+        if datas[1] == '':
+            print('null')
+            for line2 in lines2:
+                temp = line2.split(str)
+                if datas[0] == temp[0] and temp[1] != '':
+                    datas[1] = temp[1]
+                    break
+            if datas[1] == '':
+                print('没有匹配到')
+
+        print(datas)
+        lineNew = str.join(datas)
+
+        fw.write(lineNew)
+
+    # 关闭文件
+    fo1.close()
+    fo2.close()
+    fw.close()
+
+
+if __name__ == "__main__":
+    test2()
