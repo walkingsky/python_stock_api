@@ -6,7 +6,7 @@ __author__ = "walkingsky"
 from flask_cors import CORS
 from flask import Flask, render_template
 from route.stock import stock_api
-from route.fund import fund_api
+from route.fundTrade import fundTradeApi
 from cache import cache
 
 
@@ -19,7 +19,7 @@ cache.init_app(app)
 CORS(app, resources=r'/*')
 
 app.register_blueprint(stock_api)
-app.register_blueprint(fund_api)
+app.register_blueprint(fundTradeApi)
 
 
 @app.route('/')

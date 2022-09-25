@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+from models.dbFund import fundsTrade, fundsHold
 import sys
 sys.path.append("..")
-from models.dbFundTransactions import fundsTrade,fundsHold
+
 
 def test1():
     dbFunds = fundsTrade()
@@ -14,7 +15,8 @@ def test1():
             print(attr, value)
 
     del dbFunds
-	
+
+
 def test2():
     dbFunds = fundsHold()
     # dbFunds.add('测试', '123123', '2022-01-01', tradeType.buy,
@@ -25,6 +27,7 @@ def test2():
             print(attr, value)
 
     del dbFunds
+
 
 if __name__ == "__main__":
     test1()

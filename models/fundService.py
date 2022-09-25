@@ -5,7 +5,7 @@ __author__ = 'walkingsky'
 
 import json
 import requests
-from models.dbFundTransactions import fundsTrade
+from models.dbFund import fundsTrade
 
 
 class FundService:

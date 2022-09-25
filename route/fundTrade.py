@@ -7,15 +7,15 @@ from pre_request import pre, Rule
 from flask.helpers import make_response, request
 from cache import cache
 from models.fundService import FundService
-from models.dbFundTransactions import fundsTrade, fundsHold
+from models.dbFund import fundsTrade, fundsHold
 import json
 
-fund_api = Blueprint('fund_api', __name__)
+fundTradeApi = Blueprint('fundTradeApi', __name__)
 
 cachePrefixGetAll = 'fundGetAll'
 
 
-@fund_api.route('/apis/fund/search')
+@fundTradeApi.route('/apis/fund/search')
 def searchFund():
     # 按照关键字搜索基金
     # 获取股票历史行情
@@ -37,7 +37,7 @@ def searchFund():
     return json.dumps(data)
 
 
-@fund_api.route('/apis/fund/add', methods=['POST'])
+@fundTradeApi.route('/apis/fund/trade/add', methods=['POST'])
 def addTradeRecord():
     # 添加基金交易记录
     print(request.get_json())
@@ -76,7 +76,7 @@ def addTradeRecord():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/getall')
+@fundTradeApi.route('/apis/fund/trade/getall')
 @cache.cached(timeout=3600, key_prefix=cachePrefixGetAll)
 def getAllTradeRecord():
     # 获取所有的基金交易记录
@@ -103,7 +103,7 @@ def getAllTradeRecord():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/modify', methods=['PUT'])
+@fundTradeApi.route('/apis/fund/trade/modify', methods=['PUT'])
 def modidyTradeRecord():
     # 获取所有的基金交易记录
     rule = {
@@ -142,7 +142,7 @@ def modidyTradeRecord():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/get')
+@fundTradeApi.route('/apis/fund/trade/get')
 def getById():
     # 按照id获取交易记录数据
     rule = {
@@ -167,7 +167,7 @@ def getById():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/del', methods=['DELETE'])
+@fundTradeApi.route('/apis/fund/trade/del', methods=['DELETE'])
 def delById():
     # 按照id 单条删除记录
     rule = {
@@ -194,7 +194,7 @@ def delById():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/import')
+@fundTradeApi.route('/apis/fund/import')
 def importCsv():
     # 测试接口，导入服务器本地的一个csv数据文件到数据库
 
@@ -249,7 +249,7 @@ def importCsv():
     return make_response(res)
 
 
-@fund_api.route('/apis/fund/pd')
+@fundTradeApi.route('/apis/fund/trade/pd')
 def pd():
     fundsTradeDb = fundsTrade()
 
