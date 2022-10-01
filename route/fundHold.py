@@ -11,6 +11,89 @@ from models.fundService import FundService
 fundHoldApi = Blueprint('fundHoldApi', __name__)
 
 
+@fundHoldApi.route('/apis/fund/hold/add', methods=['POST'])
+def addHoldRecord():
+    # 添加基金持仓
+    rule = {
+        "name": Rule(type=str, required=True),
+        "code": Rule(type=str, required=True, reg=r'[a-zA-Z\d]{6}'),
+        "shares": Rule(type=float, required=True, gte=1),
+        "costprice": Rule(type=float, required=True, gte=0),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    fundsHoldDb = fundsHold()
+    data = fundsHoldDb.add(
+        name=params['name'], code=params['code'],  shares=params['shares'], costprice=params['costprice'])
+    res = {}
+    if(data == True):
+        res['code'] = 200
+        res['success'] = True
+    else:
+        res['code'] = 201
+        res['success'] = False
+
+    del fundsHoldDb
+    return make_response(res)
+
+
+@fundHoldApi.route('/apis/fund/hold/modify', methods=['PUT'])
+def modidyHoldRecord():
+    # 修改记录
+    rule = {
+        "name": Rule(type=str, required=True),
+        "code": Rule(type=str, required=True, reg=r'[a-zA-Z\d]{6}'),
+        "shares": Rule(type=float, required=True, gte=1),
+        "costprice": Rule(type=float, required=True, gte=0),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    fundsHoldDb = fundsHold()
+    data = fundsHoldDb.modifyBycode(code=params['code'],
+                                  data={'name': params['name'],   'shares': params['shares'], 'nacostpricev': params['costprice']})
+    res = {}
+    if(data == True):
+        res['code'] = 200
+        res['success'] = True
+    else:
+        res['code'] = 201
+        res['success'] = False
+
+    del fundsHoldDb
+    return make_response(res)
+
+
+@fundHoldApi.route('/apis/fund/hold/del', methods=['DELETE'])
+def delByCode():
+    # 按照code单条删除记录
+    rule = {
+        "code": Rule(type=str, required=True, reg=r'[\d,]+'),
+    }
+    try:
+        params = pre.parse(rule=rule)
+    except:
+        return make_response({"error": "参数错误"})
+
+    fundsHoldDb = fundsHold()
+    data = fundsHoldDb.delByCode(code = params['code'])
+
+    res = {}
+    if(data == True):
+        res['code'] = 200
+        res['success'] = True
+    else:
+        res['code'] = 201
+        res['success'] = False
+    del fundsHoldDb
+    return make_response(res)
+
+
 @fundHoldApi.route('/apis/fund/hold/getall')
 def getAllTradeRecord():
     # 获取所有的基金持仓记录

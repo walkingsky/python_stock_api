@@ -4,7 +4,7 @@ __author__ = "walkingsky"
 
 from flask import Blueprint
 from pre_request import pre, Rule
-from flask.helpers import make_response, request
+from flask.helpers import make_response
 from cache import cache
 from models.fundService import FundService
 from models.dbFund import fundsTrade, fundsHold
@@ -40,7 +40,6 @@ def searchFund():
 @fundTradeApi.route('/apis/fund/trade/add', methods=['POST'])
 def addTradeRecord():
     # 添加基金交易记录
-    print(request.get_json())
     rule = {
         "name": Rule(type=str, required=True),
         "code": Rule(type=str, required=True, reg=r'[a-zA-Z\d]{6}'),
@@ -105,7 +104,7 @@ def getAllTradeRecord():
 
 @fundTradeApi.route('/apis/fund/trade/modify', methods=['PUT'])
 def modidyTradeRecord():
-    # 获取所有的基金交易记录
+    # 修改记录
     rule = {
         "id": Rule(type=int, required=True),
         "name": Rule(type=str, required=True),

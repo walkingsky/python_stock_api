@@ -100,12 +100,12 @@ class fundsTrade:
             return None
 
     def modifyById(self, id, data={}):
-        # try:
-        session.query(fundsTradeTable).filter_by(id=id).update(data)
-        session.commit()
-        return True
-        # except exc.SQLAlchemyError:
-        return False
+        try:
+            session.query(fundsTradeTable).filter_by(id=id).update(data)
+            session.commit()
+            return True
+        except exc.SQLAlchemyError:
+            return False
 
     def delById(self, id):
         try:
@@ -151,6 +151,22 @@ class fundsHold:
         try:
             add_trade = fundsHoldTable(name, code, shares, costprice)
             session.add(add_trade)
+            session.commit()
+            return True
+        except exc.SQLAlchemyError:
+            return False
+
+    def delByCode(self, code):
+        try:
+            session.query(fundsHoldTable).filter_by(code=code).delete()
+            session.commit()
+            return True
+        except exc.SQLAlchemyError:
+            return False
+
+    def modifyBycode(self, code, data={}):
+        try:
+            session.query(fundsHoldTable).filter_by(code=code).update(data)
             session.commit()
             return True
         except exc.SQLAlchemyError:
