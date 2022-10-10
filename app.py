@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from route.stock import stock_api
 from route.fundTrade import fundTradeApi
 from route.fundHold import fundHoldApi
+from route.login import loginApi
 from cache import cache
 from route.auth import auth, generateAuthToken
 
@@ -24,6 +25,7 @@ CORS(app, resources=r'/*')
 app.register_blueprint(stock_api)
 app.register_blueprint(fundTradeApi)
 app.register_blueprint(fundHoldApi)
+app.register_blueprint(loginApi)
 
 
 @app.route('/')
@@ -36,12 +38,6 @@ def index():
 def clearCache():
     cache.clear()
     return "{'code':200,'msg':'ok'}"
-
-
-@ app.route('/test/1')
-def test1():
-    res = generateAuthToken('admin', '123456')
-    return res
 
 
 if __name__ == "__main__":

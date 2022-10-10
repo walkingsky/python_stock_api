@@ -46,6 +46,13 @@ def unauthorized():
     return make_response(jsonify({'code': 500, 'msg': '认证不正确'}), 401)
 
 
+def login(username, password):
+    if username == USERNAME and password == PASSWORD:
+        return generateAuthToken(username, password)
+    else:
+        return False
+
+
 def generateAuthToken(userName, password):
     s = Serializer(SECRET_KEY, expires_in=24*3600*7)
-    return s.dumps({'userName': userName, 'password': password})
+    return s.dumps({'userName': userName, 'password': password}).decode()
