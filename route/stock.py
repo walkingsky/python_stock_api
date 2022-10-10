@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, request
 from pre_request import pre, Rule
 from flask.helpers import make_response
 from models.stockService import StockService
+from route.auth import auth
 from cache import cache
 
 stock_api = Blueprint('stock_api', __name__)
@@ -28,6 +29,7 @@ def key_prefix_func():
 
 
 @stock_api.route('/apis/stock/hold')
+@auth.login_required
 @cache.cached(timeout=600, key_prefix=key_prefix_func)
 def getStockHold():
     # 获取持有股票信息
@@ -48,6 +50,7 @@ def getStockHold():
 
 
 @stock_api.route('/apis/stock/historydata')
+@auth.login_required
 def getStockHistoryData():
     # 获取股票历史行情
     rule = {
@@ -74,6 +77,7 @@ def getStockHistoryData():
 
 
 @stock_api.route('/apis/stock/history')
+@auth.login_required
 def getStorkHistory():
     # 获取股票历史交易数据
     rule = {
@@ -91,6 +95,7 @@ def getStorkHistory():
 
 
 @stock_api.route('/apis/stock/126')
+@auth.login_required
 def getStockByCode126():
     # 获取股票最后一天的行情数据,126 的行情数据
     rule = {
@@ -117,6 +122,7 @@ def getStockByCode126():
 
 
 @stock_api.route('/apis/stock/east')
+@auth.login_required
 def getStockByCodeEast():
     # 获取股票最后一天的行情数据,东财的行情数据
     rule = {
@@ -143,6 +149,7 @@ def getStockByCodeEast():
 
 
 @stock_api.route('/apis/industry')
+@auth.login_required
 def getIndustryData():
     # 获取行业排行数据
     rule = {
@@ -163,6 +170,7 @@ def getIndustryData():
 
 
 @stock_api.route('/apis/industry/info')
+@auth.login_required
 def getIndustryInfoData():
     # 获取行业内排行数据
     rule = {
@@ -184,6 +192,7 @@ def getIndustryInfoData():
 
 
 @stock_api.route('/apis/industry/history')
+@auth.login_required
 def getIndustryHistoryData():
     # 获取行业内排行数据
     rule = {

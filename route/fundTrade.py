@@ -8,6 +8,7 @@ from flask.helpers import make_response
 from cache import cache
 from models.fundService import FundService
 from models.dbFund import fundsTrade, fundsHold
+from route.auth import auth
 import json
 
 fundTradeApi = Blueprint('fundTradeApi', __name__)
@@ -16,6 +17,7 @@ cachePrefixGetAll = 'fundGetAll'
 
 
 @fundTradeApi.route('/apis/fund/search')
+@auth.login_required
 def searchFund():
     # 按照关键字搜索基金
     # 获取股票历史行情
@@ -38,6 +40,7 @@ def searchFund():
 
 
 @fundTradeApi.route('/apis/fund/trade/add', methods=['POST'])
+@auth.login_required
 def addTradeRecord():
     # 添加基金交易记录
     rule = {
@@ -76,6 +79,7 @@ def addTradeRecord():
 
 
 @fundTradeApi.route('/apis/fund/trade/getall')
+@auth.login_required
 @cache.cached(timeout=3600, key_prefix=cachePrefixGetAll)
 def getAllTradeRecord():
     # 获取所有的基金交易记录
@@ -103,6 +107,7 @@ def getAllTradeRecord():
 
 
 @fundTradeApi.route('/apis/fund/trade/modify', methods=['PUT'])
+@auth.login_required
 def modidyTradeRecord():
     # 修改记录
     rule = {
@@ -142,6 +147,7 @@ def modidyTradeRecord():
 
 
 @fundTradeApi.route('/apis/fund/trade/get')
+@auth.login_required
 def getById():
     # 按照id获取交易记录数据
     rule = {
@@ -167,6 +173,7 @@ def getById():
 
 
 @fundTradeApi.route('/apis/fund/trade/getbycode')
+@auth.login_required
 def getByCode():
     # 按照id获取交易记录数据
     rule = {
@@ -199,6 +206,7 @@ def getByCode():
 
 
 @fundTradeApi.route('/apis/fund/trade/del', methods=['DELETE'])
+@auth.login_required
 def delById():
     # 按照id 单条删除记录
     rule = {
@@ -226,6 +234,7 @@ def delById():
 
 
 @fundTradeApi.route('/apis/fund/import')
+@auth.login_required
 def importCsv():
     # 测试接口，导入服务器本地的一个csv数据文件到数据库
 
@@ -281,6 +290,7 @@ def importCsv():
 
 
 @fundTradeApi.route('/apis/fund/trade/pd')
+@auth.login_required
 def pd():
     fundsTradeDb = fundsTrade()
 
