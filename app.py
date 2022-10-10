@@ -9,6 +9,7 @@ from route.stock import stock_api
 from route.fundTrade import fundTradeApi
 from route.fundHold import fundHoldApi
 from cache import cache
+from route.auth import auth, generateAuthToken
 
 
 app = Flask(__name__, static_folder="../../frontend/vue_stock_view/dist/static",
@@ -18,6 +19,7 @@ app = Flask(__name__, static_folder="../../frontend/vue_stock_view/dist/static",
 cache.init_app(app)
 
 CORS(app, resources=r'/*')
+
 
 app.register_blueprint(stock_api)
 app.register_blueprint(fundTradeApi)
@@ -30,9 +32,16 @@ def index():
 
 
 @app.route('/tools/clearcache')
+@auth.login_required
 def clearCache():
     cache.clear()
-    return 'OK'
+    return "{'code':200,'msg':'ok'}"
+
+
+@ app.route('/test/1')
+def test1():
+    res = generateAuthToken('admin', '123456')
+    return res
 
 
 if __name__ == "__main__":
