@@ -135,9 +135,11 @@ class StockService:
             temp.insert(4, '-')
             temp.insert(7, '-')
             response_body = response_body + '{"code":"'+stock_code+'","date":"'\
-                + ''.join(temp)+'","time":"'+row['成交时间'].strip()+'","sell_buy":"'+row['买卖方向']+'","price":' + \
-                str(row['成交价格'])+',"market":"'+market + \
-                '","num":'+str(row['成交数量'])+'}'
+                + ''.join(temp)+'","time":"'+row['成交时间'].strip()+'","sell_buy":"'+row['买卖方向']+'","price":' \
+                + str(row['成交价格'])+',"market":"'+market  \
+                + '","num":'+str(row['成交数量']) \
+				+ ',"vol":'+str(int(row['成交数量']*row['成交价格'])) \
+				+'}'
             if index < row_num - 1:
                 response_body = response_body + ','
         response_body = response_body + ']}'
