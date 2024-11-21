@@ -3,8 +3,7 @@ from flask_socketio import SocketIO, emit
 import time
 import requests
 import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from multiprocessing import Process,Pipe
+
 
 headers ={
     'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -24,8 +23,6 @@ headers ={
 }
 
 stopTreading = False;
-executor = ThreadPoolExecutor(max_workers=1)
-all_task = []
 
 app = Flask(__name__,template_folder='./')
 #app.config['SECRET_KEY'] = 'secret!'
@@ -39,8 +36,8 @@ def index():
 def connect_handler():
     global stopTreading
     emit('my_response', {'data': 'Connected'})
-    # emit('Client'+ sid + 'connected')
-    # stopTreading = True
+    #emit('Client'+ sid + 'connected')
+    stopTreading = True
 
 @socketio.on('disconnect')
 def disconnect_handler():
@@ -49,16 +46,9 @@ def disconnect_handler():
 @socketio.on('GetData')
 def handle_my_custom_event(data):
     print('print received message[my event]: ' + str(data))
-    global stopTreading,executor,all_task
-    print(len(all_task))
-    if(len(all_task) >= 1):
-        stopTreading = True
-    for task in as_completed(all_task):
-        taskData = task.result()
-        print('任务{}成功结束'.format(taskData))
-    all_task.clear()
-    all_task.append(executor.submit(getDataThread,data))
-    return    
+    global stopTreading
+    stopTreading = True
+    time.sleep(1)    
     threadingGetData = threading.Thread(target=getDataThread,name=data,args=(data,))
     stopTreading = False
     threadingGetData.start() 
@@ -74,17 +64,20 @@ def handle_message(message):
     print('print received message: ' + str(message))
     emit('emit received message: ' + str(message))
 '''
-def background_thread(pipe):
-    global all_task
+def background_thread():
+    count = 0
+
+    # delimiter 分隔符，decode_unicode
+    # for line in r.iter_lines(chunk_size=1024,delimiter="\n",decode_unicode=True):
+    #    if line:
+    #        socketio.emit('my_response', {'data': 'Count: ' + str(count)})            
 
     while True:
         socketio.sleep(1)  # 每隔1秒发送一次数据
-        socketio.emit('my_response',{'all_task':'count:' + str(len(all_task)) })
-        msg = pipe.recv()
-        if msg:
-            socketio.emit('GetData',str(msg))
+        #count = count + 1
+        #socketio.emit('my_response',{'data':'count:' + str(count) })
         
-def getDataThread(code,pipe):
+def getDataThread(code):
     global stopTreading
     url='https://88.push2.eastmoney.com/api/qt/ulist/sse?' +\
         'secids=' + str(code) +\
@@ -104,16 +97,15 @@ def getDataThread(code,pipe):
             print('2 stop')
             session.close()
             stopTreading = False
-            return code
-    '''
+            return
+    
     cnt = 0
     while not stopTreading:
         print(cnt)
         cnt = cnt + 1
         time.sleep(1)
-    '''
+
 
 if __name__ == '__main__':
-    leftPipe = Pipe()
-    socketio.start_background_task(background_thread,leftPipe)
+    socketio.start_background_task(background_thread)
     socketio.run(app,host='127.0.0.1',port=5001,debug=True)
