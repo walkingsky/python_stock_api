@@ -7,3 +7,4 @@
 fund.db
 *.ipynb
 **/.ipynb_checkpoints
+/config.py

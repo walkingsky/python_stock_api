@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 测试页面</title>
+</head>
+
+<body>
+
+</body>
+
+<script type="application/javascript">
+    var ws = new WebSocket("ws://127.0.0.1:5001/ws");
+
+    // 监听
+    ws.onmessage = function (MessageEvent) {
+        console.log(MessageEvent.data);
+    };
+    ws.send('11111');
+</script>
+
+</html>

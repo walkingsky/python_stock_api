@@ -10,11 +10,14 @@ from route.fundTrade import fundTradeApi
 from route.fundHold import fundHoldApi
 from route.login import loginApi
 from cache import cache
-from route.auth import auth, generateAuthToken
+from route.auth import auth
+from route.longConnect import longConnect
+
+from config import WEB_STATIC_DIR,WEB_DIR,HOST,PORT,IS_DEBUG
 
 
-app = Flask(__name__, static_folder="../../frontend/vue_stock_view/dist/static",
-            template_folder="../../frontend/vue_stock_view/dist")
+app = Flask(__name__, static_folder=WEB_STATIC_DIR,
+            template_folder=WEB_DIR)
 
 
 cache.init_app(app)
@@ -26,6 +29,7 @@ app.register_blueprint(stock_api)
 app.register_blueprint(fundTradeApi)
 app.register_blueprint(fundHoldApi)
 app.register_blueprint(loginApi)
+app.register_blueprint(longConnect)
 
 
 @app.route('/')
@@ -42,5 +46,7 @@ def clearCache():
 
 if __name__ == "__main__":
     """初始化,debug=True"""
-    app.run(host='127.0.0.1', port=5000, debug=True,
+    app.run(host=HOST, port=PORT, debug=IS_DEBUG,
             threaded=True)
+    # http_serve = WSGIServer((HOST,PORT),app)
+    # http_serve.serve_forever()

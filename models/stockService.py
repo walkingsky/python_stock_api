@@ -147,6 +147,7 @@ class StockService:
 
     def getStockByCode126(self, code):
         '''
+            ---不可用了---
             获取股票的是实时信息，126数据接口
             #code 参数，code 可以是一个，也可以是用逗号分隔的多个。 要带上市场简写，比如 sh600036,sz300301
         '''
@@ -160,7 +161,7 @@ class StockService:
     def getStockByCodeEastM(self, code):
         '''
             获取股票的是实时信息，东财数据接口
-            #code 参数，code 可以是一个，也可以是用逗号分隔的多个。 要带上市场简写，比如 sh600036,sz300301
+            #code 参数，code 必须是一个 比如 1.600036或者0.300301
         '''
         base_url = 'https://push2.eastmoney.com/api/qt/stock/trends2/get?secid='+code + \
             '&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13&fields2=f51,f52,f53,f54,f55,f56,f57,f58&iscr=0'
@@ -174,7 +175,7 @@ class StockService:
         # 获取股票的历史行情
         today = time.strftime("%Y%m%d", time.localtime())
         url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?fields1=f1,f2,f3,f4,f5&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&fqt=0&end=' + \
-            today + '&klt=101&secid=' + code + '&fqt=1&lmt=1000'
+            today + '&klt=101&secid=' + code + '&fqt=1&lmt=500'
         res = requests.get(url)
         result = {}
         if(res.status_code == 200):
