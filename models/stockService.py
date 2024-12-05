@@ -70,7 +70,7 @@ class StockService:
         # merged_df['成交数量'] = np.where(
         #    merged_df['买卖方向'] == '买入', merged_df['成交数量'], -merged_df['成交数量'])
         res_df = merged_df.groupby(
-            ['证券代码', '市场'], as_index=False).sum()
+            ['证券代码', '市场'], as_index=False).sum().reset_index()
         # print(res_df)
         merged_df = merged_df.drop(
             columns=['买卖方向', '交易金额', '业务名称', '成交编号', '成交价格', '成交数量', '成交日期', '成交时间', '股东账号']).drop_duplicates(subset=['证券代码', '市场'], keep='first')

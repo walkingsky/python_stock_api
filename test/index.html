@@ -1,6 +1,7 @@
 <input type="button" onclick="disconnect()" value="断开" />
-<input type="button" onclick="getdata1()" value="获取数据1" />
-<input type="button" onclick="getdata2()" value="获取数据2" />
+<input type="button" onclick="setCode1()" value="设置股票代码0.002902,1.600833" />
+<input type="button" onclick="setCode2()" value="设置股票代码0.003031,0.300274" />
+<input type="button" onclick="getdata()" value="获取信息" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
     integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
     crossorigin="anonymous"></script>
@@ -15,13 +16,19 @@
         socket.close();
     }
 
-    function getdata1() {
-        socket.emit('GetData', '0.002902,1.600833');
+    function setCode1() {
+        console.log('setCode1');
+        socket.emit('SetCode', '0.002902,1.600833');
     }
-    function getdata2() {
-        socket.emit('GetData', '0.003031,0.300274');
+    function setCode2() {
+        console.log('setCode2');
+        socket.emit('SetCode', '0.003031,0.300274');
     }
-    socket.on('dataMsg', function (msg) {
+    function getdata() {
+        console.log('getdata');
+        socket.emit('GetData');
+    }
+    socket.on('stocks_data', function (msg) {
         console.log(msg);
     });
 </script>
