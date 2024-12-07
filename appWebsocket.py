@@ -1,53 +1,20 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-__author__ = "walkingsky"
-
-
-from flask_cors import CORS
-from flask import Flask, render_template,request
+from flask import Flask,request,redirect
 from flask_socketio import SocketIO, emit
-from route.stock import stock_api
-from route.fundTrade import fundTradeApi
-from route.fundHold import fundHoldApi
-from route.login import loginApi
-from cache import cache
-from route.auth import auth
-import redis,json
+import json
+import redis
+from config import REDIS_HOST,REDIS_PORT,HOST,WS_PORT,IS_DEBUG,PORT
 
-from config import WEB_STATIC_DIR,WEB_DIR,HOST,WS_PORT,IS_DEBUG,REDIS_HOST,REDIS_PORT,PORT
 
 redisClient = redis.Redis(host=REDIS_HOST,port=REDIS_PORT,db=0,decode_responses=True)
-app = Flask(__name__, static_folder=WEB_STATIC_DIR,
-            template_folder=WEB_DIR)
+
+app = Flask(__name__,template_folder='./')
 #app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app,logger=True)
 
-cache.init_app(app)
-
-CORS(app, resources=r'/*')
-
-
-app.register_blueprint(stock_api)
-app.register_blueprint(fundTradeApi)
-app.register_blueprint(fundHoldApi)
-app.register_blueprint(loginApi)
-
-
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/testWebSocket')
-def testWebSocket():
-    return render_template('testWebSocket.html')
-
-
-@app.route('/tools/clearcache')
-@auth.login_required
-def clearCache():
-    cache.clear()
-    return "{'code':200,'msg':'ok'}"
-
+    url = request.url.replace(str(PORT),str(WS_PORT),1)
+    return redirect(url)
 
 @socketio.on('connect')
 def connect_handler():
@@ -78,17 +45,13 @@ def on_stop():
 
 @socketio.on('GetData')
 def handle_message():
-    # print('db name :'+ str(request.sid) + '_msg')
+    print('db name :'+ str(request.sid) + '_msg')
     message = redisClient.lpop(str(request.sid) + '_msg')
-    # print(message)
+    print(message)
     if message:
         socketio.emit('stocks_data',json.loads(message))
-  
+        
 
-if __name__ == "__main__":
-    """初始化,debug=True"""
-    # app.run(host=HOST, port=PORT, debug=IS_DEBUG,
-    #        threaded=True)
-    socketio.run(app,host=HOST,port=PORT,debug=IS_DEBUG)
-    # http_serve = WSGIServer((HOST,PORT),app)
-    # http_serve.serve_forever()
+if __name__ == '__main__':
+    # socketio.start_background_task(background_thread)
+    socketio.run(app,host=HOST,port=WS_PORT,debug=IS_DEBUG)

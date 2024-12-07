@@ -13,27 +13,39 @@
 
 #### 2.配置
 
-- （必须）修改stockService.py 文件中的getPath 函数，返回上一步的目录DIR 
+- （必须）修改config.py 文件中的路径参数，使其匹配前端页面项目的保存路径 
 
   ```
-  def getPath(self):
-          if os.path.exists('/data'):
-              path = "/data/tools/python/stock_csv"
-          else:
-              path = "F:/study/python/stock_csv"
-          return path
+  # 前端static目录
+  WEB_STATIC_DIR = '../../frontend/vue_stock_view/dist/static'
+  # 前端页面目录
+  WEB_DIR = '../../frontend/vue_stock_view/dist'
+  
+- ​	根据实际需求修改config.py 文件中的其他配置参数，也可以保持默认
 
-- ​	修改app.py 中的flask执行参数，比如端口号（也可以保持默认不修改）
-
-  `app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)`
+  
 
 #### 3.安装库
 
 `pip install -r requirements.txt`
 
-#### 4.执行
+#### 4.安装Redis server，并启动redis服务
 
-`python app.py`
+#### 5.执行
+
+启动后台数据服务
+
+```
+python python services\stockStatus2Redis.py
+```
+
+启动web主程序
+
+```
+python app.py
+```
+
+
 
 #### 备注说明：
 
